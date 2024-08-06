@@ -1,19 +1,30 @@
-document.getElementById('contactForm').addEventListener('submit', async function (event) {
+ // Initialize Firebase
+ const firebaseConfig = {
+  apiKey: "AIzaSyCRRGLY5wimSd9GdJt3Np-BFI9tFAFjvnU",
+  authDomain: "conversion-6394a.firebaseapp.com",
+  projectId: "conversion-6394a",
+  storageBucket: "conversion-6394a.appspot.com",
+  messagingSenderId: "1053184555205",
+  appId: "1:1053184555205:web:f85d614a068cfccde218ac"
+};
+document.getElementById('contactForm').addEventListener('submit', async function(event) {
   event.preventDefault();
 
-  const formData = new FormData(event.target);
-  const data = Object.fromEntries(formData.entries());
+  const name = this.name.value;
+  const email = this.email.value;
+  const message = this.message.value;
 
   try {
-    const response = await fetch('/.netlify/functions/contact-form', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+    await firestore.collection('submissions').add({
+      name,
+      email,
+      message,
+      timestamp: new Date(),
     });
-
-    const result = await response.json();
-    alert(result.message);
+    alert('Submission received!');
+    this.reset();
   } catch (error) {
-    alert(`Failed to submit form: ${error.message}`);
+    console.error('Error storing submission:', error);
+    alert('Failed to submit form.');
   }
 });
